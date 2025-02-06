@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+{% load static %}
+{% load custom_tags %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minor Project</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header">
+            <div class="left">
+                <img id="img1" src="{% static 'pngegg.png' %}" alt="">
+            </div>
+            <div class="centre">
+            </div>
+            <div class="right">
+                <ul class="navbar">
+                    {% if user.is_authenticated %}
+                    <p>Welcome, {{ user.email }}</p>
+                    <li class="logout">
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn">Logout</button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li class="signin"><a href="{% url 'signin' %}" class="btn">𖡌 Sign in</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </header>
+    <section>
+        <h1 class="sechead">Śrīmad-Bhāgavatam (Bhāgavata Purāṇa)</h1>
+        <p class="secbody">Śrīmad-Bhāgavatam, a cornerstone of Hindu spirituality, comprises 18,000 verses divided into twelve cantos. It chronicles the divine exploits of gods, avatars, and sages while elucidating profound philosophical truths and the significance of devotion (bhakti). This scripture delves into cosmology, ethics, and the nature of reality, offering spiritual guidance and emphasizing the pursuit of divine love as the path to ultimate liberation. It remains a revered text for seekers of truth and wisdom.
+        </p>
+    </section>
+    <section>
+        <div class="container" id="container1">
+            {% for scripture in scriptures %}
+                <div class="smallboxhead2">
+                    <span></span>
+                    <a href="{% url 'chapters' scripture.title %}">{{ scripture.title }} </a>
+                </div>
+            {% empty %}
+                <p>No scriptures available</p>
+            {% endfor %}
+        </div>
+    </section>    
+    <div class="container" id="container2">
+        <div class="comment-form">
+            {% if user.is_authenticated %}
+            <form action="{% url 'post_comment' %}" method="post" class="comment-form">
+                {% csrf_token %}
+                <textarea name="text" placeholder="Add a comment..." class="comment-input"></textarea>
+                <input type="submit" value="&#x27A4;" class="comment-submit">
+            </form>
+            {% endif %}
+        </div>
+        <div class="comments-section">
+            {% if user.is_authenticated %}
+            <h2 style="color: rgb(247, 247, 247);">Comments</h2>
+            <ul id="commentsButtonWrapper">
+                <a href="{% url 'comments' %}" class="btn" id="commentsButton">View Comments</a>
+            </ul>
+            <div class="comment-container">
+                {% for comment in comments %}
+                <div class="comment">
+                    <p class="comment-user">{{ comment.user }}</p>
+                    <p class="comment-text">{{ comment.text }}</p> 
+                    <div class="comment-actions">
+                        <form action="{% url 'delete_comment' comment.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-btn">Delete Comment</button>
+                        </form>
+                    </div>
+                </div>
+                <hr class="comment-divider">
+                {% endfor %}
+                {% else %}
+                <p style="color: rgb(255, 255, 255);">Please <a href="{% url 'signin' %}" class="btn">sign in</a> to post a comment.</p> <!-- Changed prompt text color to yellow -->
+            {% endif %}
+            </div>
+        </div>
+        
+    </div>
+    <script>
+        // Function to hide the comments button
+        function hideCommentsButton() {
+            var commentsButtonWrapper = document.getElementById('commentsButtonWrapper');
+            commentsButtonWrapper.style.display = 'none';
+        }
+    
+        // Check if the current URL contains "/comments"
+        if (window.location.href.indexOf("/comments") !== -1) {
+            // If yes, hide the comments button
+            hideCommentsButton();
+        }
+        function isUrlOpened(url) {
+            return window.location.href === url;
+        }
+
+        // Get the URL of the View Scriptures button
+        const viewScripturesUrl = document.querySelector('#viewScripturesButton a').href;
+
+        // Check if the URL is already opened
+        if (isUrlOpened(viewScripturesUrl)) {
+            // Hide the View Scriptures button
+            document.querySelector('#viewScripturesButton').style.display = 'none';
+        }
+    </script>
+    
+</body>
+</html>

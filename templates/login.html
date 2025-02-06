@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Login Form</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        /* Add any custom styles here */
+    </style>
+</head>
+<body>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Sign In</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeLoginModalButton">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm" method="post" action="{% url 'signin' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="login_username">Email</label>
+                            <input type="email" class="form-control" id="login_username" name="email" placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    </form>
+                    {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error_message }}
+                    </div>
+                    {% endif %}
+                    <div class="text-center mt-3">
+                        <a href="#" class="text-muted" id="forgotPasswordLink">Forgot password?</a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <p class="text-muted">Don't have an account? <a href="#" id="signupLink">Sign Up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var loginModal = document.getElementById('loginModal');
+            loginModal.classList.add('show');
+            loginModal.style.display = 'block';
+            var modalBackdrop = document.createElement('div');
+            modalBackdrop.classList.add('modal-backdrop', 'fade', 'show');
+            document.body.appendChild(modalBackdrop);
+
+            // Event listener for close button of login modal
+            var closeLoginModalButton = document.getElementById('closeLoginModalButton');
+            closeLoginModalButton.addEventListener('click', function() {
+                // Redirect to home view
+                window.location.href = '/';
+            });
+
+            // Event listener for "Forgot password?" link
+            var forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            forgotPasswordLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                // Redirect to forgot password view
+                window.location.href = "{% url 'forgot_password' %}";
+            });
+
+            // Event listener for "Sign Up" link
+            var signupLink = document.getElementById('signupLink');
+            signupLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                // Redirect to sign up view
+                window.location.href = "{% url 'signup' %}";
+            });
+        });
+    </script>
+
+</body>
+</html>
